@@ -19,18 +19,16 @@ import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
+import { AlbumCreate, AlbumEdit, AlbumList, AlbumShow } from "./pages/albums";
 import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
+  ArtistCreate,
+  ArtistEdit,
+  ArtistList,
+  ArtistShow,
+} from "./pages/artists";
+import { GenreCreate, GenreEdit, GenreList, GenreShow } from "./pages/genres";
+import { SongCreate, SongEdit, SongList, SongShow } from "./pages/songs";
+import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
 import { dataProvider } from "./providers/data";
 
 function App() {
@@ -47,21 +45,51 @@ function App() {
                 routerProvider={routerProvider}
                 resources={[
                   {
-                    name: "blog_posts",
-                    list: "/blog-posts",
-                    create: "/blog-posts/create",
-                    edit: "/blog-posts/edit/:id",
-                    show: "/blog-posts/show/:id",
+                    name: "genre",
+                    list: "/genres",
+                    create: "/genres/create",
+                    edit: "/genres/edit/:id",
+                    show: "/genres/show/:id",
                     meta: {
                       canDelete: true,
                     },
                   },
                   {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
+                    name: "artist",
+                    list: "/artists",
+                    create: "/artists/create",
+                    edit: "/artists/edit/:id",
+                    show: "/artists/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                  {
+                    name: "album",
+                    list: "/albums",
+                    create: "/albums/create",
+                    edit: "/albums/edit/:id",
+                    show: "/albums/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                  {
+                    name: "song",
+                    list: "/songs",
+                    create: "/songs/create",
+                    edit: "/songs/edit/:id",
+                    show: "/songs/show/:id",
+                    meta: {
+                      canDelete: true,
+                    },
+                  },
+                  {
+                    name: "user",
+                    list: "/users",
+                    create: "/users/create",
+                    edit: "/users/edit/:id",
+                    show: "/users/show/:id",
                     meta: {
                       canDelete: true,
                     },
@@ -86,19 +114,37 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="blog_posts" />}
+                      element={<NavigateToResource resource="genre" />}
                     />
-                    <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
+                    <Route path="/genres">
+                      <Route index element={<GenreList />} />
+                      <Route path="create" element={<GenreCreate />} />
+                      <Route path="edit/:id" element={<GenreEdit />} />
+                      <Route path="show/:id" element={<GenreShow />} />
                     </Route>
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
+                    <Route path="/artists">
+                      <Route index element={<ArtistList />} />
+                      <Route path="create" element={<ArtistCreate />} />
+                      <Route path="edit/:id" element={<ArtistEdit />} />
+                      <Route path="show/:id" element={<ArtistShow />} />
+                    </Route>
+                    <Route path="/albums">
+                      <Route index element={<AlbumList />} />
+                      <Route path="create" element={<AlbumCreate />} />
+                      <Route path="edit/:id" element={<AlbumEdit />} />
+                      <Route path="show/:id" element={<AlbumShow />} />
+                    </Route>
+                    <Route path="/songs">
+                      <Route index element={<SongList />} />
+                      <Route path="create" element={<SongCreate />} />
+                      <Route path="edit/:id" element={<SongEdit />} />
+                      <Route path="show/:id" element={<SongShow />} />
+                    </Route>
+                    <Route path="/users">
+                      <Route index element={<UserList />} />
+                      <Route path="create" element={<UserCreate />} />
+                      <Route path="edit/:id" element={<UserEdit />} />
+                      <Route path="show/:id" element={<UserShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
