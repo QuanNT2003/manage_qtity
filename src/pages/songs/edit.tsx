@@ -12,6 +12,9 @@ export const SongEdit = () => {
     optionLabel: "name",
     optionValue: "id",
     defaultValue: songData?.artist_id,
+    pagination: {
+      pageSize: 1000,
+    },
     queryOptions: {
       enabled: !!songData?.artist_id,
     },
@@ -22,6 +25,9 @@ export const SongEdit = () => {
     optionLabel: "title",
     optionValue: "id",
     defaultValue: songData?.album_id,
+    pagination: {
+      pageSize: 1000,
+    },
     queryOptions: {
       enabled: !!songData?.album_id,
     },

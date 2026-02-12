@@ -43,10 +43,6 @@ export const dataProvider: DataProvider = {
 
     console.log("getList query:", query);
 
-    // Support for filters and sorters if needed in future
-    // if (filters) { ... }
-    // if (sorters) { ... }
-
     const response = await axiosInstance.get(url, {
       params: query,
     });
@@ -60,7 +56,148 @@ export const dataProvider: DataProvider = {
       total: data.pagination?.total || data.data?.length || 0, // Fallback for total
     };
   },
+  create: async ({ resource, variables }) => {
+    const url = `${API_URL}/${resource}`;
+
+    // Check if any variable is a file or contains a file
+    const hasFile = Object.values(variables).some((value) => {
+      if (value instanceof File) return true;
+      if (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        value[0]?.originFileObj instanceof File
+      )
+        return true;
+      return false;
+    });
+
+    if (hasFile || variables.file) {
+      const formData = new FormData();
+
+      for (const key in variables) {
+        const value = variables[key];
+
+        if (value === undefined || value === null) continue;
+
+        // Handle file arrays (Antd Upload)
+        if (key === "file" && Array.isArray(value) && value.length > 0) {
+          if (value[0].originFileObj) {
+            formData.append(key, value[0].originFileObj);
+          }
+          continue;
+        }
+
+        // Handle normal arrays (e.g. genre_ids)
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            formData.append(key, val); // NestJS handles repeated keys as array
+          });
+          continue;
+        }
+
+        // Handle simple values
+        formData.append(key, value as string | Blob);
+      }
+
+      const response = await axiosInstance.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return {
+        data: response.data,
+      };
+    }
+
+    // Default JSON behavior
+    const response = await axiosInstance.post(url, variables);
+    return {
+      data: response.data,
+    };
+  },
+  update: async ({ resource, id, variables }) => {
+    const url = `${API_URL}/${resource}/${id}`;
+
+    // Check if any variable is a file or contains a file
+    const hasFile = Object.values(variables).some((value) => {
+      if (value instanceof File) return true;
+      if (
+        Array.isArray(value) &&
+        value.length > 0 &&
+        value[0]?.originFileObj instanceof File
+      )
+        return true;
+      return false;
+    });
+
+    // Check specifically for file field key
+    const isFileUpload =
+      hasFile ||
+      (variables.file &&
+        Array.isArray(variables.file) &&
+        variables.file.length > 0 &&
+        variables.file[0]?.originFileObj);
+
+    if (isFileUpload) {
+      const formData = new FormData();
+
+      for (const key in variables) {
+        const value = variables[key];
+
+        if (value === undefined || value === null) continue;
+
+        // Handle file arrays (Antd Upload)
+        if (key === "file" && Array.isArray(value) && value.length > 0) {
+          if (value[0].originFileObj) {
+            formData.append(key, value[0].originFileObj);
+          }
+          continue;
+        }
+
+        // Handle normal arrays
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            formData.append(key, val);
+          });
+          continue;
+        }
+
+        formData.append(key, value as string | Blob);
+      }
+
+      // Use PATCH for update as per controller
+      const response = await axiosInstance.patch(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return {
+        data: response.data,
+      };
+    }
+
+    const response = await axiosInstance.patch(url, variables);
+    return {
+      data: response.data,
+    };
+  },
+  getMany: async ({ resource, ids }) => {
+    // Backend doesn't support batch fetch, so we fetch individually
+    const promises = ids.map((id) =>
+      axiosInstance.get(`${API_URL}/${resource}/${id}`),
+    );
+
+    const responses = await Promise.all(promises);
+
+    // Each response is already unwrapped by interceptor
+    const data = responses.map((response) => response.data);
+
+    return {
+      data,
+    };
+  },
 };
 
-// Export axios instance for other uses
 export const httpClient = axiosInstance;

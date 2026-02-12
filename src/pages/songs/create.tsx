@@ -9,18 +9,27 @@ export const SongCreate = () => {
     resource: "artist",
     optionLabel: "name",
     optionValue: "id",
+    pagination: {
+      pageSize: 1000,
+    },
   });
 
   const { selectProps: albumSelectProps } = useSelect({
     resource: "album",
     optionLabel: "title",
     optionValue: "id",
+    pagination: {
+      pageSize: 1000,
+    },
   });
 
   const { selectProps: genreSelectProps } = useSelect({
     resource: "genre",
     optionLabel: "name",
     optionValue: "id",
+    pagination: {
+      pageSize: 1000,
+    },
   });
 
   return (
