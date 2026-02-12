@@ -17,6 +17,12 @@ export const SongCreate = () => {
     optionValue: "id",
   });
 
+  const { selectProps: genreSelectProps } = useSelect({
+    resource: "genre",
+    optionLabel: "name",
+    optionValue: "id",
+  });
+
   return (
     <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
@@ -41,6 +47,12 @@ export const SongCreate = () => {
           ]}
         >
           <Select {...artistSelectProps} />
+        </Form.Item>
+        <Form.Item label={"Featured Artists"} name={["artist_ids"]}>
+          <Select {...artistSelectProps} mode="multiple" allowClear />
+        </Form.Item>
+        <Form.Item label={"Genres"} name={["genre_ids"]}>
+          <Select {...genreSelectProps} mode="multiple" allowClear />
         </Form.Item>
         <Form.Item label={"Album"} name={["album_id"]}>
           <Select {...albumSelectProps} allowClear />
