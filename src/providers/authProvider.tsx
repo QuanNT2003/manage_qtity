@@ -19,6 +19,33 @@ export const authProvider: AuthProvider = {
       });
       const { accessToken, refreshToken } = res.data.data;
 
+      // Fetch profile to verify Super Admin role
+      try {
+        const profileRes = await axios.get(`${API_URL}/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (profileRes.data.data.role !== "SUPER_ADMIN") {
+          return {
+            success: false,
+            error: {
+              message: "Access Denied",
+              name: "Only Super Admin can login to this system",
+            },
+          };
+        }
+      } catch {
+        return {
+          success: false,
+          error: {
+            message: "Authentication Failed",
+            name: "Could not verify user permissions",
+          },
+        };
+      }
+
       localStorage.setItem("access_token", accessToken);
       localStorage.setItem("refresh_token", refreshToken);
 
@@ -97,7 +124,7 @@ export const authProvider: AuthProvider = {
           return { authenticated: false, redirectTo: "/login" };
         }
       }
-    } catch (error) {
+    } catch {
       return { authenticated: false, redirectTo: "/login" };
     }
 
@@ -128,7 +155,7 @@ export const authProvider: AuthProvider = {
           Authorization: `Bearer ${token}`,
         },
       });
-      return res.data.roles || [];
+      return res.data.data.role ? [res.data.data.role] : [];
     } catch {
       return null;
     }
