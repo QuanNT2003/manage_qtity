@@ -10,14 +10,6 @@ export const SongShow = () => {
 
   const record = data?.data;
 
-  const { data: artistData, isLoading: artistIsLoading } = useOne({
-    resource: "artist",
-    id: record?.artist_id || "",
-    queryOptions: {
-      enabled: !!record?.artist_id,
-    },
-  });
-
   const { data: albumData, isLoading: albumIsLoading } = useOne({
     resource: "album",
     id: record?.album_id || "",
@@ -39,11 +31,25 @@ export const SongShow = () => {
       <Title level={5}>{"Title"}</Title>
       <TextField value={record?.title} />
       <Title level={5}>{"Artist"}</Title>
-      {artistIsLoading ? (
-        <>Loading...</>
-      ) : (
-        <TextField value={artistData?.data?.name} />
-      )}
+      <TextField value={record?.artist?.name || "-"} />
+      <Title level={5}>{"Featured Artists"}</Title>
+      <TextField
+        value={
+          record?.featured_artists?.length > 0
+            ? record.featured_artists
+                .map((item: any) => item.artist?.name)
+                .join(", ")
+            : "-"
+        }
+      />
+      <Title level={5}>{"Genres"}</Title>
+      <TextField
+        value={
+          record?.genres?.length > 0
+            ? record.genres.map((item: any) => item.genre?.name).join(", ")
+            : "-"
+        }
+      />
       <Title level={5}>{"Album"}</Title>
       {record?.album_id ? (
         albumIsLoading ? (

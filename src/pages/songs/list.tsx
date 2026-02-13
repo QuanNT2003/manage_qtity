@@ -15,17 +15,6 @@ export const SongList = () => {
   });
 
   const {
-    result: { data: artists },
-    query: { isLoading: artistIsLoading },
-  } = useMany({
-    resource: "artist",
-    ids: result?.data?.map((item) => item?.artist_id).filter(Boolean) ?? [],
-    queryOptions: {
-      enabled: !!result?.data,
-    },
-  });
-
-  const {
     result: { data: albums },
     query: { isLoading: albumIsLoading },
   } = useMany({
@@ -48,14 +37,17 @@ export const SongList = () => {
         <Table.Column dataIndex="id" title={"ID"} width={100} />
         <Table.Column dataIndex="title" title={"Title"} />
         <Table.Column
-          dataIndex={"artist_id"}
+          dataIndex={"artist"}
           title={"Artist"}
-          render={(value) =>
-            artistIsLoading ? (
-              <>Loading...</>
-            ) : (
-              artists?.find((item) => item.id === value)?.name || "-"
-            )
+          render={(value) => value?.name || "-"}
+        />
+        <Table.Column
+          dataIndex={"featured_artists"}
+          title={"Featured Artists"}
+          render={(value: any[]) =>
+            value?.length > 0
+              ? value.map((item) => item.artist?.name).join(", ")
+              : "-"
           }
         />
         <Table.Column
