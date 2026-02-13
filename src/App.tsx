@@ -1,4 +1,4 @@
-import { GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
@@ -11,6 +11,7 @@ import {
 import "@refinedev/antd/dist/reset.css";
 
 import routerProvider, {
+  CatchAllNavigate,
   DocumentTitleHandler,
   NavigateToResource,
   UnsavedChangesNotifier,
@@ -29,7 +30,9 @@ import {
 import { GenreCreate, GenreEdit, GenreList, GenreShow } from "./pages/genres";
 import { SongCreate, SongEdit, SongList, SongShow } from "./pages/songs";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
+import { Login } from "./pages/login";
 import { dataProvider } from "./providers/data";
+import { authProvider } from "./providers/authProvider";
 
 function App() {
   return (
@@ -41,6 +44,7 @@ function App() {
             <DevtoolsProvider>
               <Refine
                 dataProvider={dataProvider}
+                authProvider={authProvider}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerProvider}
                 resources={[
@@ -104,12 +108,17 @@ function App() {
                 <Routes>
                   <Route
                     element={
-                      <ThemedLayout
-                        Header={() => <Header sticky />}
-                        Sider={(props) => <ThemedSider {...props} fixed />}
+                      <Authenticated
+                        key="authenticated-inner"
+                        fallback={<CatchAllNavigate to="/login" />}
                       >
-                        <Outlet />
-                      </ThemedLayout>
+                        <ThemedLayout
+                          Header={() => <Header sticky />}
+                          Sider={(props) => <ThemedSider {...props} fixed />}
+                        >
+                          <Outlet />
+                        </ThemedLayout>
+                      </Authenticated>
                     }
                   >
                     <Route
@@ -147,6 +156,18 @@ function App() {
                       <Route path="show/:id" element={<UserShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
+                  </Route>
+                  <Route
+                    element={
+                      <Authenticated
+                        key="authenticated-outer"
+                        fallback={<Outlet />}
+                      >
+                        <NavigateToResource />
+                      </Authenticated>
+                    }
+                  >
+                    <Route path="/login" element={<Login />} />
                   </Route>
                 </Routes>
 

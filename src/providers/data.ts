@@ -4,7 +4,16 @@ import { API_URL } from "./constants";
 import axios from "axios";
 
 // Create axios instance
-const axiosInstance = axios.create();
+const axiosInstance = axios.create({ baseURL: API_URL });
+
+// Add request interceptor to attach JWT token
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // Add response interceptor to unwrap the {status: "success", data: ...} format
 axiosInstance.interceptors.response.use(
