@@ -50,6 +50,14 @@ export const dataProvider: DataProvider = {
       per_page: pageSize || 10,
     };
 
+    if (filters) {
+      filters.forEach((filter) => {
+        if (filter.operator !== "or" && "field" in filter && filter.value) {
+          query[filter.field] = filter.value;
+        }
+      });
+    }
+
     console.log("getList query:", query);
 
     const response = await axiosInstance.get(url, {

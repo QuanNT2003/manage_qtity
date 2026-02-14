@@ -10,8 +10,16 @@ export const SongCreate = () => {
     optionLabel: "name",
     optionValue: "id",
     pagination: {
-      pageSize: 1000,
+      pageSize: 10,
     },
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+    debounce: 500,
   });
 
   const { selectProps: albumSelectProps } = useSelect({
@@ -55,10 +63,16 @@ export const SongCreate = () => {
             },
           ]}
         >
-          <Select {...artistSelectProps} />
+          <Select {...artistSelectProps} showSearch filterOption={false} />
         </Form.Item>
         <Form.Item label={"Featured Artists"} name={["artist_ids"]}>
-          <Select {...artistSelectProps} mode="multiple" allowClear />
+          <Select
+            {...artistSelectProps}
+            mode="multiple"
+            allowClear
+            showSearch
+            filterOption={false}
+          />
         </Form.Item>
         <Form.Item label={"Genres"} name={["genre_ids"]}>
           <Select {...genreSelectProps} mode="multiple" allowClear />

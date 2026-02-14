@@ -9,15 +9,39 @@ import {
 } from "@refinedev/antd";
 import { type BaseRecord } from "@refinedev/core";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { Space, Table, Tag } from "antd";
+import { Space, Table, Tag, Input } from "antd";
+import { useState, useEffect } from "react";
 
 export const ArtistList = () => {
-  const { tableProps } = useTable({
+  const [searchTerm, setSearchTerm] = useState("");
+  const { tableProps, setFilters } = useTable({
     syncWithLocation: true,
   });
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters([
+        {
+          field: "name",
+          operator: "contains",
+          value: searchTerm || undefined,
+        },
+      ]);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, setFilters]);
+
   return (
     <List>
+      <div style={{ marginBottom: "16px", maxWidth: "300px" }}>
+        <Input
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          allowClear
+        />
+      </div>
       <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="id" title={"ID"} width={100} />
         <Table.Column

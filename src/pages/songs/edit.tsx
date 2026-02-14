@@ -13,8 +13,16 @@ export const SongEdit = () => {
     optionValue: "id",
     defaultValue: songData?.artist_id,
     pagination: {
-      pageSize: 1000,
+      pageSize: 10,
     },
+    onSearch: (value) => [
+      {
+        field: "name",
+        operator: "contains",
+        value,
+      },
+    ],
+    debounce: 500,
     queryOptions: {
       enabled: !!songData?.artist_id,
     },
@@ -56,7 +64,16 @@ export const SongEdit = () => {
             },
           ]}
         >
-          <Select {...artistSelectProps} />
+          <Select {...artistSelectProps} showSearch filterOption={false} />
+        </Form.Item>
+        <Form.Item label={"Featured Artists"} name={["artist_ids"]}>
+          <Select
+            {...artistSelectProps}
+            mode="multiple"
+            allowClear
+            showSearch
+            filterOption={false}
+          />
         </Form.Item>
         <Form.Item label={"Album"} name={["album_id"]}>
           <Select {...albumSelectProps} allowClear />
